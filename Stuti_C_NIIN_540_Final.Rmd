@@ -1,0 +1,214 @@
+---
+title: "NIIN_540_Finals_Stuti_C"
+author: "Stuti C"
+date: "2023-12-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 11:Pick one voxel from one control subject, and a voxel from an AD subject (it can be at the same or different position). We’ll call the intensity values at these voxels V1_CN and V1_AD, respectively. Now pick a second voxel from each of the images; we’ll label these V2_CN and V2_AD, respectively.
+
+```{r Defining intensity values for different voxels from AD and controls, include=TRUE}
+
+#Create a dataframe with different intensity values) # Create a dataframe
+data <- data.frame(
+  V1_CN = 2522,
+  V2_CN = 3500,
+  V1_AD = 2714,
+  V2_AD = 2729
+)
+```
+
+## Question 12: Let’s pretend V1_CN represents the mean value for a particular GM region of interest for control subjects and V1_AD, the mean value for the same GM ROI. Let’s pretend the standard deviation (not variance) for the controls is given as the absolute difference between V2_CN and V1_CN, and the standard deviation for the AD patients is the absolute difference between V2_AD and V1_AD. 
+```{r Calculating the absolute difference between the voxel intensities of AD and controls, include = TRUE}
+
+# Calculate differences, to obtain the standard deviation 
+SD_CN <- data$V2_CN - data$V1_CN
+SD_AD <- data$V2_AD - data$V1_AD
+
+# Print the result i.e. standard deviation
+cat("Standard deviation for CN:", SD_CN, "\n")
+cat("Standard deviation for AD:", SD_AD, "\n")
+
+```
+## a. Assuming the means and standard deviations you just calculated are from a normal distribution for each of the clinical diagnostic groups, draw 100 samples from each group. What is the mean and standard deviation for each of these? Create a histogram for each group. What statistical test would you use to determine if the means are significantly different between the two groups?
+```{r 100 samples of the normal distribution from each group of AD and CN, include=TRUE}
+
+#First calculate mean_CN and mean_AD from the intensity values mentioned above 
+mean_CN <- (data$V1_CN + data$V2_CN) / 2
+mean_AD <- (data$V1_AD + data$V2_AD) / 2 
+
+# Set seed for random number generation, ensures reproducibility 
+set.seed(123)
+
+# Number of samples
+num_samples <- 100
+
+# Generate random samples for CN
+samples_CN <- rnorm(num_samples, mean = mean_CN, sd = SD_CN)
+
+# Generate random samples for AD
+samples_AD <- rnorm(num_samples, mean = mean_AD, sd = SD_AD)
+
+# Combine the samples into a data frame
+sample_data <- data.frame(
+  CN = samples_CN,
+  AD = samples_AD
+)
+
+# Print the first few rows of the generated samples
+
+View(sample_data)
+
+
+# Calculate mean and standard deviation of random samples for CN group
+mean_CN <- mean(samples_CN)
+sd_CN <- sd(samples_CN)
+
+# Calculate mean and standard deviation of random samples for AD group
+mean_AD <- mean(samples_AD)
+sd_AD <- sd(samples_AD)
+
+# Print the results
+cat("Mean for CN group:", mean_CN, "\n")
+cat("Standard Deviation for CN group:", sd_CN, "\n\n")
+
+cat("Mean for AD group:", mean_AD, "\n")
+cat("Standard Deviation for AD group:", sd_AD, "\n")
+
+#Create a histogram for each group
+
+# Create histogram for CN group
+hist(samples_CN, main = "Histogram for CN Group", xlab = "Values", col = "pink")
+
+# Add a legend for clarity
+legend("topright", legend = c("CN Group"), fill = c("pink"))
+
+# Create histogram for AD group
+hist(samples_AD, main = "Histogram for AD Group", xlab = "Values", col = "yellow")
+
+# Add a legend for clarity
+legend("topright", legend = c("CN Group", "AD Group"), fill = c("pink", "yellow"))
+
+# Do a t-test to check for differences in means between the two groups 
+t_test_result <- t.test(samples_CN, samples_AD)
+
+# Print the result
+print(t_test_result)
+
+```
+# What statistical test would you use to determine if the means are significantly different between the two groups?
+
+Ans: The 't.test' can be used to determine whether the means of the two groups are significantly different from each other. The null hypothesis is that there is no difference. In the case of the above two groups i.e. AD and CN, we see a large positive difference in the t-statistic, which means that there is a large difference between the means of the two groups. Since the p value is also very low (4.827e-05), we can reject the null hypothesis. 
+
+b. As the sample size gets larger, with increasing N, the variance also gets closer to the expected population variance, and the distribution starts to appear more like a normal distribution i.e has a peak in the center. In addition, according to the central limit theorem, having a large sample size can allow for the distribution of the sample means to be normal, even when the underlying population/ sample distribution is not normal. 
+
+
+##Question 13: Now we will randomly assign age and sex to each of the 200 data samples you have. 
+a.	The controls are between ages 45 and 70 years and the patients are between 55 and 75 years old. Randomly assign an age to each of the samples from the appropriate uniform distribution (i.e., between 45 and 70 or 55 and 75, depending on the diagnosis). 
+b.	You also know that 45% of the controls are female and 60% of the patients are female, the rest are male. How could you draw from another set of uniform distributions to randomly assign sex for each of the 200 individuals to ensure the proportions are approximately what you know about the sample? Randomly assign each data point as male or female. If you didn’t draw from the uniform distributions, explain what you did and your reasoning. What percent of each group are female? 
+
+
+```{r Assigning Age and Sex to the randomly generated samples, include=TRUE}
+
+# Set seed for random number generation
+set.seed(123)
+
+# Define sample sizes
+n_CN <- length(samples_CN)
+n_AD <- length(samples_AD)
+
+# Define age limits
+age_limit_CN <- c(45, 70)
+age_limit_AD <- c(55, 75)
+
+# Generate random ages for CN group
+Age_CN <- runif(n_CN, min = age_limit_CN[1], max = age_limit_CN[2])
+
+# Generate random ages for AD group
+Age_AD <- runif(n_AD, min = age_limit_AD[1], max = age_limit_AD[2])
+
+# Combine ages with samples
+data_CN <- data.frame(Age = Age_CN, Value = samples_CN, Group = "CN")
+data_AD <- data.frame(Age = Age_AD, Value = samples_AD, Group = "AD")
+
+# Combine the data from both the samples 
+combined_data <- rbind(data_CN, data_AD)
+
+# Print the first few rows of the combined data
+View(combined_data)
+```
+
+```{r  Randomly assigning sex to the AD and CN samples, include=TRUE}
+
+# Set seed for random number generation
+set.seed(346)
+
+# Define the sample size of the combined AD and CN groups 
+n_total <- length(combined_data$Value)
+n_CN_female <- round(0.45 * n_total)  # 45% female in CN group
+n_AD_female <- round(0.60 * n_total)  # 60% female in AD group
+
+# Generate random values for sex (1 for female, 0 for male)
+sex_values <- runif(n_total)
+
+# Assign sex based on specified proportions
+combined_data$Sex <- ifelse(sex_values <= 0.45, "Female", "Male")  # specifying 45% female in CN group
+combined_data$Sex[combined_data$Group == "AD" & sex_values <= 0.60] <- "Female"  # specifying 60% female in AD group
+
+# Print the first few rows of the updated combined data
+View(combined_data)
+
+#Calculate percentage of females from each group AD and CN
+
+percentage_female_CN <- with(subset(combined_data, Group == "CN"), mean(Sex == "Female") * 100)
+percentage_female_AD <- with(subset(combined_data, Group == "AD"), mean(Sex == "Female") * 100)
+
+# Print the results
+cat("Percentage of females in CN group:", percentage_female_CN, "%\n")
+cat("Percentage of females in AD group:", percentage_female_AD, "%\n")
+
+```
+
+## 14.	Now we test for group differences while controlling for age and sex. Set up a linear regression to test whether there is a case/control difference between 100 AD patients and 100 controls for the GM measure you’ve selected (i.e., randomly drawn!), after covarying for age and sex.
+a.	Explain in your own words what two assumptions we went over in class are needed to make sure the linear regression model is an appropriate model to use. Give examples of what may violate those assumptions in this case. 
+b.	Let’s pretend we test for case/control differences in 4 additional regions of interest (all independent from each other). If our significance threshold for a single test is p < 0.05, what would be our threshold now? Why do we need to make this adjustment, and what are the dangers of not making this adjustment? 
+
+
+```{r Linear regression, include=TRUE}
+
+#Setting up a linear regression model 
+
+#Value is the GM measure randomly drawn i.e. intensity, Group is the group whether patients or controls i.e. AD or CN, Age and Sex added as covariates 
+model <- lm(Value ~ Group + Age + Sex, data = combined_data) 
+summary(model)
+
+#Setting up another linear regression to include only 100 samples for each group i.e. AD and CN 
+
+# Set the seed for reproducibility 
+set.seed(756)
+
+# Select the first 100 samples for each group
+samples_regression_AD <- combined_data[combined_data$Group == "AD", ][1:100, ]
+samples_regression_CN <- combined_data[combined_data$Group == "CN", ][1:100, ]
+
+# Combine the samples back into a new data frame
+selected_samples <- rbind(samples_regression_AD, samples_regression_CN)
+
+# Fit a linear regression model
+model <- lm(Value ~ Group + Age + Sex, data = selected_samples)
+summary(model)
+
+
+```
+
+a. The two assumptions that need to be met in order to ensure that linear regression model is the appropriate model to use are: 1) there is a linear relationship between the dependent and the independent variables. Hence, any change in the predictor (independent) variable, should be associated with a change in response (dependent) variable, and this relationship should be constant as well as proportional. 2) The data follows a normal distribution, i.e. there is a distribution of values e.g. any feature extracted in neuroimaging like total intra-cranial volume, can have a distributed range and vary. In addition, the samples are assumed to be distributed independently and identically. This means that there should not be any underlying relationship between the samples. 
+
+b. The significance threshold can be determined by calculating the Bonferroni-adjusted significance threshold. The formula for this is: 
+
+αBonferroni = α/n where n is the number of independent tests being conducted and α is the original significance threshold (i.e. 0.05). Hence, the adjusted significance threshold for 4 tests will be 0.05/4 = 0.10125. 
+
+We need to make this adjustment to avoid Type I errors, in which, when we conduct multiple hypothesis tests, the risk of obtaining a statisticially significant result (p<0.05) purely by chance, increases. To address this issue, the Bonferroni correction is applied to the significance threshold. Making this correction can improve the chances of finding at least one statistically significant result through a random effect. The dangers of not making this adjustment, especially when we do multiple comparisons can lead to increases in error rate of Type I errors, and incorrectly rejecting the null hypothesis, even if it is actually true. 

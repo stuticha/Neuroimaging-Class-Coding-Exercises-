@@ -1,0 +1,151 @@
+---
+title: "Stuti_C_HW_NIIN_540"
+author: "Stuti C"
+date: "2023-09-20"
+output: html_document
+---
+
+# Part_1: Random variables, normal distributions, variance, covariance, and correlations
+
+Vector of 10 points randomly chosen from the normal distribution with expected mean 10 and standard deviation 5. Calculate the mean and variance.
+
+```{r codeblock SC1, include=TRUE}
+v1_sc=rnorm(10, mean = 10, sd = 5)
+```
+
+```{r codeblock SC2, include=TRUE}
+result.mean <- mean(v1_sc)
+print(result.mean)
+```
+```{r codeblock SC3, include=TRUE}
+var=var(v1_sc)
+print(var)
+```
+
+Plot a histogram of all the points
+```{r codeblock SC4, include=TRUE}
+v2=rnorm(10, mean = result.mean, sd = var)
+h <- hist(v2, breaks=5, plot=TRUE)
+plot(h)
+```
+# repeat with vectors of 20, 50 and 100 points
+
+```{r codeblock SC5, include = TRUE}
+v2_sc=rnorm(20, mean = 10, sd = 5)
+result.mean <- mean(v2_sc)
+print(result.mean)
+```
+
+```{r codeblock SC6, include = TRUE}
+var=var(v2_sc)
+print(var)
+```
+
+```{r codeblock SC7, include = TRUE}
+v3_sc=rnorm(20, mean = result.mean, sd = var)
+h <- hist(v3_sc, breaks=5, plot=TRUE)
+plot(h)
+```
+
+```{r codeblock SC8, include = TRUE}
+v3_sc=rnorm(50, mean = 10, sd = 5)
+result.mean <- mean(v3_sc)
+print(result.mean)
+```
+
+```{r codeblock SC9, include = TRUE}
+var=var(v3_sc)
+print(var)
+```
+
+
+```{r codeblock SC10, include = TRUE}
+v4_sc=rnorm(50, mean = result.mean, sd = var)
+h <- hist(v4_sc, breaks=5, plot=TRUE)
+plot(h)
+```
+```{r codeblock SC11, include = TRUE}
+v5_sc=rnorm(100, mean = 10, sd = 5)
+result.mean <- mean(v5_sc)
+print(result.mean)
+```
+```{r codeblock SC12, include = TRUE}
+var=var(v5_sc)
+print(var)
+```
+```{r codeblock SC13, include = TRUE}
+v6_sc=rnorm(50, mean = result.mean, sd = var)
+h <- hist(v6_sc, breaks=10, plot=TRUE)
+plot(h)
+```
+
+Create vectors A1 and A2.
+A1 is a vector of 150 points (size), with values between range 50-1000. A2 is a vector of 150 points (size) with range 100-1000.
+```{r codeblock SC14, include = TRUE}
+A1<-runif(150, min = 50, max = 1000)
+print(A1)
+
+var=var(A1)
+print(var)
+```
+
+```{r codeblock SC15, include = TRUE}
+A2<-runif(n=150, min = 100, max=1000)
+print(A2)
+
+var=var(A2)
+print(var)
+```
+
+create a 2X2 covariance matrix between A1 and A2. This can be done using the function "cov". First we need to define our dataframe for creating the covariance matrix
+
+```{r codeblock SC16, include = TRUE}
+sample_data_vector<-data.frame(var1 = A1, var2 = A2)
+cov(sample_data_vector)
+```
+
+Covariance is a statistical measure. First, I defined 2 vectors A1 and A2 having the length 150, and then used the above code to create a 2X2 covariance matrix between A1 and A2. Covariance shows the relationship between a pair of random values, and depicts how one variable causes change in the other (measure of linear correlation between the two variables).
+
+Covariance matrix helps us understand how different variables in our dataset relate to each other.
+
+Source:
+How to create a covariance matrix <https://www.geeksforgeeks.org/how-to-create-a-covariance-matrix-in-r/>
+
+How to create a vector of numbers: <https://www.statology.org/random-vector-in-r/>
+
+# Calculating correlation matrix between two vectors A1 and A2 using 'Pearson correlation'.
+
+Source: <https://www.geeksforgeeks.org/compute-the-correlation-coefficient-value-between-two-vectors-in-r-programming-cor-function/>
+
+Pearson's correlation gives a coefficient measurement of linear correlation which shows the strength and direction of correlation between variables (positive = similar/convergent, negative = divergent, different). Correlation coefficient value closer to 1 indicates strong correlation.
+
+```{r codeblock SC17, include = TRUE}
+x<-c(A1)
+y<-c(A2)
+print(cor(x, y, method = "pearson"))
+```
+
+New vector A3  where each element is the average of that element in vectors A1 and A2.
+
+```{r codeblock SC18, include = TRUE}
+x<-c(A1)
+y<-c(A2)
+A3<- (x+y)/2
+print(A3)
+
+var=var(A3)
+print(var)
+```
+```{r codeblock SC19, include = TRUE}
+#Check that for an index i, where i is between 1 and 150, A3[i] equals 0.5*(A1[i] + A2[i])
+test=0.5*(as.numeric(A1[1:150])+as.numeric(A2[1:150]))
+test
+```
+Changes in variances: the varaince reduces into half since the values of the matrix are also halved.
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
